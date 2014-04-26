@@ -1,0 +1,10 @@
+app.plt
+.ct
+deps/
+.eunit
+.rebar
+apps/*/ebin
+apps/*/doc
+*.beam
+_rel/
+.vagrant
