@@ -1,5 +1,4 @@
 app.plt
-.ct
 deps/
 .eunit
 .rebar
