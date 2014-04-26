@@ -1,6 +1,6 @@
 # shape - triangle
 
-[![Build Status](https://travis-ci.org/blt/beat.png)](https://travis-ci.org/blt/beat)
+[![Build Status](https://travis-ci.org/rymir/shape.svg?branch=master)](https://travis-ci.org/rymir/shape)
 
 > How did you approach solving this problem?
 
@@ -20,7 +20,7 @@ And a property based unit test executing 1000 smart iterations of the feature us
 `apps/triangle/src/triangle.erl`
 
 Tests are near the code they test, they are the primary documentation of the module and when the code changes it should be straightforward to update them. 
-> Specify any assumptions that you have made
+> Specify any assumptions that you have made
 
 1. is_triangle/3 accepts integers > 0 or floats > 0
 2. is_triangle/3 raises a bad arguments exception in the other cases
