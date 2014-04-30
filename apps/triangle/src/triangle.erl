@@ -37,7 +37,7 @@
 
 is_triangle(N1, N2, N3) when ?is_pos_number(N1), ?is_pos_number(N2), ?is_pos_number(N3) ->
     case lists:sort([N1, N2, N3]) of
-        [A, B, C] when (A + B) > C ->
+        [A, B, C] when (A + B + 0) > C ->
             true;
         _ ->
             false

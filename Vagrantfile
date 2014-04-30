@@ -10,7 +10,22 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # please see the online documentation at vagrantup.com.
 
   # Every Vagrant virtual environment requires a box to build off of.
-  config.vm.box = "rymir/erlang_base"
+  config.vm.define "shape" do |shp|
+    config.vm.box = "rymir/erlang_base"
+
+    shp.vm.provider :virtualbox do |vbox, override|
+      override.ssh.username = "ubuntu"
+    end
+
+    shp.vm.provider :aws do |aws, override|
+      aws.keypair_name = "development"
+      aws.instance_type = "t1.micro"
+      aws.ami = "ami-2edf3846"
+      aws.security_groups = ["development"]
+      override.ssh.username = "ubuntu"
+      override.ssh.private_key_path = "~/.ssh/development.pem"
+    end
+  end
 
   # Disable automatic box update checking. If you disable this, then
   # boxes will only be checked for updates when the user runs

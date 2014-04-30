@@ -34,6 +34,6 @@ relup: clean validate
 
 clean:
 	@$(RM) -rf deps/
-	@$(REBAR) clean
+	@$(REBAR) -r clean
 
 .PHONY: all deps compile dialyze test doc validate release relup
