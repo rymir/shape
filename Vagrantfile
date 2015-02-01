@@ -9,11 +9,19 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # options are documented and commented below. For a complete reference,
   # please see the online documentation at vagrantup.com.
 
+  config.hostmanager.enabled = true
+  config.hostmanager.manage_host = false
+  config.hostmanager.ignore_private_ip = false
+  config.hostmanager.include_offline = true
+
   # Every Vagrant virtual environment requires a box to build off of.
   config.vm.define "shape" do |shp|
-    config.vm.box = "rymir/erlang_base"
+    shp.vm.box = "rymir/erlang_base"
+
+    shp.vm.hostname = "shape"
 
     shp.vm.provider :virtualbox do |vbox, override|
+      override.vm.network :private_network, :auto_network => true
       override.ssh.username = "ubuntu"
     end
 
@@ -24,6 +32,11 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       aws.security_groups = ["development"]
       override.ssh.username = "ubuntu"
       override.ssh.private_key_path = "~/.ssh/development.pem"
+    end
+
+    config.vm.provision "ansible" do |ansible|
+      ansible.playbook = "shape.yml"
+      ansible.verbose = "v"
     end
   end
 

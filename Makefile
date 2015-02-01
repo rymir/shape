@@ -1,6 +1,15 @@
-REBAR=`which rebar`
-DIALYZER=`which dialyzer`
-RELX=`which relx`
+REBAR=./rebar
+RELX=./relx
+DIALYZER=$(shell which dialyzer)
+ifeq ($(DIALYZER),)
+	$(error "Dialyzer not available on this system")
+endif
+
+DEPSOLVER_PLT=./.plt
+
+RELEASES = \
+	shape \
+	shape2
 
 all: deps compile
 
@@ -10,30 +19,42 @@ deps:
 compile: deps
 	@$(REBAR) compile
 
-app.plt:
-	@$(DIALYZER) --build_plt --output_plt app.plt --apps erts kernel stdlib crypto
+$(DEPSOLVER_PLT):
+	@$(DIALYZER) --output_plt $(DEPSOLVER_PLT) --build_plt \
+		--apps erts kernel stdlib crypto public_key -r deps
 
-dialyze: app.plt compile
-	@$(DIALYZER) -q --plt app.plt apps/*/ebin -Wunmatched_returns \
-		-Werror_handling -Wrace_conditions -Wno_undefined_callbacks
+dialyze: $(DEPSOLVER_PLT) compile
+	@$(DIALYZER) --plt $(DEPSOLVER_PLT) --src apps/*/src \
+		-Wunmatched_returns -Werror_handling -Wrace_conditions \
+		-Wno_undefined_callbacks
 
 test: compile
 	@$(REBAR) -r -v -DTEST eunit skip_deps=true verbose=0
-	ct_run -dir apps/*/itest -pa ebin -verbosity 0 -logdir .ct/logs -erl_args +K true +A 10
+	ct_run -dir apps/*/itest -pa ebin -verbosity 0 -logdir .ct/logs \
+		-erl_args +K true +A 10
 
 doc:
-	@$(REBAR) -r doc skip_deps=true	
+	@$(REBAR) -r doc skip_deps=true
 
 validate: dialyze test
 
-release: clean validate
-	@$(RELX) release tar
+release: $(addsuffix .release, $(RELEASES))
+
+%.release: clean validate PHONY
+	@$(RELX) release -c relx-$*.config tar
 
 relup: clean validate
 	@$(RELX) release relup tar
 
 clean:
-	@$(RM) -rf deps/
 	@$(REBAR) -r clean
 
-.PHONY: all deps compile dialyze test doc validate release relup
+distclean: clean
+	@rm $(DEPSOLVER_PLT)
+	@rm -rvf ./deps/*
+
+PHONY:
+	@true
+
+.PHONY: PHONY all deps compile dialyze test doc validate release relup clean \
+	distclean

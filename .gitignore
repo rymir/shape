@@ -1,4 +1,4 @@
-app.plt
+.plt
 deps/
 .eunit
 .rebar
@@ -7,3 +7,4 @@ apps/*/doc
 *.beam
 _rel/
 .vagrant
+.ct/

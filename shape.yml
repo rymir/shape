@@ -1,0 +1,5 @@
+- hosts: all
+  tasks:
+    - name: generate a release
+      command: make distclean chdir=/vagrant/
+      command: make release chdir=/vagrant/
